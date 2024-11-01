@@ -1,0 +1,21 @@
+{
+  "name": "nuevo-poyecto-integrador-2024",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.1",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "rootpath": "^0.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
