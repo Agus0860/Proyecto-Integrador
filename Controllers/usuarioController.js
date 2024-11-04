@@ -1,4 +1,4 @@
-const { crearUsuario } = require('../Models/usuarioModel.js');
+const { crearUsuario, eliminarUsuarioPorId, buscarPorMail } = require('../Models/usuarioModel.js');
 
 async function registrarUsuario(req, res) {
     try {
@@ -19,4 +19,57 @@ async function eliminarUsuario(req, res) {
     }
 }
 
-module.exports = { registrarUsuario, eliminarUsuario, eliminarUsuario };
+async function buscarPorEmail(req, res) {
+    const { email } = req.params;
+    try {
+        const results = await buscarPorMail(email);
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        res.status(200).json(results[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+async function login(req, res) {
+    try {
+        const { mail, contrasenia } = req.body;
+        const [result] = await buscarPorMail(mail);
+
+
+        const iguales = bcrypt.compareSync(contrasenia, result.contrasenia);
+
+        if (iguales) {
+            let user = {
+                nombre: result.nombre,
+                apellido: result.apellido,
+                mail: result.email
+            }
+            //firmar usuario
+            jwt.sign(user, 'ultraMegaSecretPass', { expiresIn: '10000s' }, (err, token) => {
+                if (err) {
+                    res.status(500).send({
+                        message: err
+                    });
+                } else {
+                    res.status(200).json(
+                        {
+                            datos: user,
+                            token: token
+                        }
+                    );
+                }
+            })
+        } else {
+            res.status(403).send({
+                message: 'Contraseña Incorrecta'
+            });
+        }
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+}
+
+
+module.exports = { registrarUsuario, eliminarUsuario, eliminarUsuario, buscarPorEmail };
